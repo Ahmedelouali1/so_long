@@ -6,7 +6,7 @@
 /*   By: ahmel-ou <ahmel-ou@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 18:13:13 by ahmel-ou          #+#    #+#             */
-/*   Updated: 2025/03/24 21:50:14 by ahmel-ou         ###   ########.fr       */
+/*   Updated: 2025/03/29 02:40:15 by ahmel-ou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	check_all(char **map)
 {
-	check_characters_and_elements(map);
 	check_rectangular(map);
 	check_walls(map);
-	chack_valid_path(map);
+	check_map(map);
+	check_valid_path(map);
 }
 void    check_rectangular(char **map)
 {
@@ -29,7 +29,10 @@ void    check_rectangular(char **map)
 	while (map[i])
 	{
 		if (ft_strlen(map[i]) != row_len)
+        {
+            free_map(map);
 			error_exit("Error\nMap is not rectangular.");
+        }
 		i++;
 	}
 }
@@ -41,29 +44,38 @@ void	check_walls(char **map)
 
 	i = 0;
 	rows = 0;
-	while (map[rows])
+	while (map[rows] != NULL)
 		rows++;
 	j = 0;
 	while (map[0][j])
 	{
-		if (map[0][j] != '1')
+		if (map[0][j++] != '1')
+		{
+			free_map(map);
 			error_exit("Error\nMap is not surrounded by walls.");
+		}	
 	}
 	j = 0;
 	while (map[rows - 1][j])
 	{
-		if (map[rows - 1] != '1')
+		if (map[rows - 1][j++] != '1')
+		{
+			free_map(map);
 			error_exit("Error\nMap is not surrounded by walls.");
+		}	
 	}
 	i = 0;
 	while (i < rows)
 	{
 		if (map[i][0] != '1' || map[i][ft_strlen(map[i]) - 1] != '1')
+		{
+			free_map(map);
 			error_exit("Error\nMap is not surrounded by walls.");
+		}	
 		i++;
 	}
 }
-void	check_map(char **map)
+int	check_map(char **map)
 {
 	int i;
 	int player_count;
@@ -87,12 +99,18 @@ void	check_map(char **map)
 			else if (map[i][j] == 'C')
 				coll_count++;
 			else if (map[i][j] != '1' && map[i][j] != '0')
+			{
+				free_map(map);		
 				error_exit("Eroor\nInvalid map character.");
+			}
 			j++;
 		}
 		i++;
 	}
-	if (player_count != 1 || exit_count < 1 || coll_count < 1)
+	if (player_count != 1 || exit_count != 1 || coll_count < 1)
+	{
+		free_map(map);
 		error_exit("Error\nInvalid map elements.");
+	}	
 	return (1);
 }
