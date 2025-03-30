@@ -6,7 +6,7 @@
 /*   By: ahmel-ou <ahmel-ou@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 16:52:53 by ahmel-ou          #+#    #+#             */
-/*   Updated: 2025/03/29 06:59:52 by ahmel-ou         ###   ########.fr       */
+/*   Updated: 2025/03/30 06:45:31 by ahmel-ou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	**read_map(char *fl)
 	char	**map;
 	char	*gnl;
 	char	*join_map;
-	char		*tmp;
+	char	*tmp;
 
 	fd = open(fl, O_RDONLY);
 	if (fd < 0)
@@ -78,35 +78,38 @@ int	check_extension(char *str)
 	return (1);
 }
 
-void load_graphics(game_t *data)
+void	load_graphics(game_t *data)
 {
-	int height;
-	int width;
-	int x;
-	int y;
+	int	height;
+	int	width;
+	int	x;
+	int	y;
 
 	data->conx = NULL;
-data->window = NULL;
-data->wall = NULL;
-data->background = NULL;
-data->collectible = NULL;data->player = NULL;
+	data->window = NULL;
+	data->wall = NULL;
+	data->background = NULL;
+	data->collectible = NULL;
+	data->player = NULL;
+	data->exit = NULL;
 	width = ft_strlen(data->map[0]);
 	height = 0;
 	data->conx = mlx_init();
 	while (data->map[height])
 		height++;
-	data->window = mlx_new_window(data->conx, 100*width, 100*height, "so_long");
+	data->window = mlx_new_window(data->conx, 60 * width, 60 * height, "so_long");
 	data->wall = mlx_xpm_file_to_image(data->conx, "./images/w.xpm", &x, &y);
 	data->background = mlx_xpm_file_to_image(data->conx, "./images/b.xpm", &x, &y);
 	data->collectible = mlx_xpm_file_to_image(data->conx, "./images/c.xpm", &x, &y);
 	data->player = mlx_xpm_file_to_image(data->conx, "./images/p.xpm", &x, &y);
-printf("conx :%p\n window : %p\nwall : %p\nbackground : %p\n collec %p\n player : %p", data->conx, data->window, data->wall, data->background, data->collectible, data->player);
+	data->exit = mlx_xpm_file_to_image(data->conx, "./images/e.xpm", &x, &y);
+	// printf("conx :%p\n window : %p\nwall : %p\nbackground : %p\n collec %p\n player : %p", data->conx, data->window, data->wall, data->background, data->collectible, data->player);
 }
 
-void draw_map(game_t *data)
+void	draw_map(game_t *data)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (data->map[i])
@@ -116,37 +119,86 @@ void draw_map(game_t *data)
 		{
 			printf("%d i %d\n", i, j);
 			if (data->map[i][j] == '1')
-				mlx_put_image_to_window(data->conx, data->window, data->wall, j*100, i*100);
-			// if (data->map[i][j] == 'E')
-			// 	mlx_put_image_to_window(data->conx, data->window, data->exit, j*100, i*100);
+				mlx_put_image_to_window(data->conx, data->window, data->wall, j * 60, i * 60);
+			if (data->map[i][j] == 'E')
+				mlx_put_image_to_window(data->conx, data->window, data->exit, j*60, i*60);
 			if (data->map[i][j] == 'C')
-				mlx_put_image_to_window(data->conx, data->window, data->collectible, j*100, i*100);
+				mlx_put_image_to_window(data->conx, data->window, data->collectible, j * 60, i * 60);
+			j++;
+		}
+		i++;
+	}
+	mlx_put_image_to_window(data->conx, data->window, data->player, data->p_x*60, data->p_y*60 );
+}
+int	player_movements(int key, void *param)
+{
+	game_t	*data;
+
+	data = (game_t *)param;
+	if (key == W_KEY)
+	{
+		if(data->map[data->p_y - 1][data->p_x] != '1')
+			data->p_y -= 1;
+	}	
+	if (key == A_KEY)
+	{
+		if(data->map[data->p_y][data->p_x - 1] != '1')
+		data->p_x -= 1;
+	}	
+	if (key == S_KEY)
+	{
+		if(data->map[data->p_y + 1][data->p_x] != '1')
+		data->p_y += 1;
+	}	
+	if (key == D_KEY)
+	{
+		if(data->map[data->p_y][data->p_x + 1] != '1')
+		data->p_x += 1;
+	}
+	if (data->map[data->p_y][data->p_x] == 'C')
+		data->map[data->p_y][data->p_x] = '0';
+	
+	mlx_clear_window(data->conx, data->window);
+	draw_map(data);
+	return (0);
+}
+void player_position(game_t *data)
+{
+	int i;
+	int j;
+	
+	i = 0;
+	while(data->map[i])
+	{
+		j = 0;
+		while (data->map[i][j])
+		{
 			if (data->map[i][j] == 'P')
-				mlx_put_image_to_window(data->conx, data->window, data->player, j*100, i*100);
+			{
+				data->p_x = j;
+				data->p_y = i;
+			
+				return;
+			}
 			j++;
 		}
 		i++;
 	}
 }
-int	mouse(int key, void *param)
+int ft_destroy(void *param)
 {
 	game_t *data;
-
+	
 	data = (game_t *)param;
-	if (key == W_KEY)
-		data->p_y -= 20; 
-	if (key == A_KEY)
-		data->p_x -= 20; 
-	if (key == S_KEY)
-		data->p_y += 20; 
-	if (key == D_KEY)
-		data->p_x += 20;
-    mlx_clear_window(data->conx, data->window);
-	draw_map(data);
-    mlx_put_image_to_window(data->conx, data->window, data->player, data->p_x, data->p_y);
-	return (0);
+	free_map(data->map);
+	mlx_destroy_image(data->conx, data->background);
+	mlx_destroy_image(data->conx, data->exit);
+	mlx_destroy_image(data->conx, data->wall);
+	mlx_destroy_image(data->conx, data->player);
+	mlx_destroy_image(data->conx, data->collectible);
+	mlx_destroy_window(data->conx, data->window);
+	exit(0);
 }
-
 
 int	main(int argc, char *argv[])
 {
@@ -164,12 +216,11 @@ int	main(int argc, char *argv[])
 	check_all(map);
 	data.map = map;
 	load_graphics(&data);
-	data.p_x = 500;
-	data.p_y = 500;
+	player_position(&data);
 	draw_map(&data);
-	mlx_key_hook(data.window, mouse, &data);
 	
-	
-	
+	mlx_key_hook(data.window, player_movements, &data);
+	mlx_hook(data.window, 17, 0, ft_destroy, &data);
+
 	mlx_loop(data.conx);
 }

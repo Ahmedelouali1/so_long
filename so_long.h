@@ -6,7 +6,7 @@
 /*   By: ahmel-ou <ahmel-ou@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 17:02:53 by ahmel-ou          #+#    #+#             */
-/*   Updated: 2025/03/29 06:20:00 by ahmel-ou         ###   ########.fr       */
+/*   Updated: 2025/03/30 06:01:55 by ahmel-ou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@
 
 typedef struct game_s
 {
-	int	x;
-	int	y;
     void *conx;
     void *window;
     void *wall;
