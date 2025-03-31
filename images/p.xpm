@@ -2,7 +2,7 @@
 static char *standing1714488104[] = {
 /* columns rows colors chars-per-pixel */
 "60 60 189 2 ",
-"   c None",
+"   c #023020",
 ".  c #2B1A1B",
 "X  c #351A15",
 "o  c #3D1B11",

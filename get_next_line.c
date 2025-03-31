@@ -6,7 +6,7 @@
 /*   By: ahmel-ou <ahmel-ou@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 21:37:10 by ahmel-ou          #+#    #+#             */
-/*   Updated: 2025/03/29 02:50:06 by ahmel-ou         ###   ########.fr       */
+/*   Updated: 2025/03/31 08:16:48 by ahmel-ou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,28 +95,3 @@ char	*get_next_line(int fd)
 	svariable = ft_update(svariable);
 	return (line);
 }
-/*
-#include <fcntl.h>
-#include <stdio.h>
-
-int main() {
-    // Open the file test1.txt for reading
-    FILE *file = fopen("test.txt", "r");
-    if (file == NULL) {
-        perror("Error opening file");
-        return 1;
-    }
-
-    // Read the file line by line
-    char *line;
-    while ((line = get_next_line(fileno(file))) != NULL) {
-        // Print the line
-        printf("%s", line);
-        free(line);  // Don't forget to free the memory after use!
-    }
-
-    // Close the file after reading
-    fclose(file);
-    return 0;
-}
-*/

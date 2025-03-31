@@ -2,7 +2,7 @@
 static char *wall1714469818[] = {
 /* columns rows colors chars-per-pixel */
 "60 60 235 2 ",
-"   c None",
+"   c #023020",
 ".  c #1C1514",
 "X  c #1C191A",
 "o  c #0F0B0F",
